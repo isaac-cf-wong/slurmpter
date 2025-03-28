@@ -312,7 +312,7 @@ class TestSlurm(unittest.TestCase):
 
         # Test forbidden function calls.
         self.assertRaises(NotImplementedError, slurm.add_child, slurm_1)
-        self.assertRaises(NotImplementedError, slurm.add_child, [slurm_1, slurm_2])
+        self.assertRaises(NotImplementedError, slurm.add_children, [slurm_1, slurm_2])
         self.assertRaises(NotImplementedError, slurm.add_parent, slurm_1)
         self.assertRaises(NotImplementedError, slurm.add_parents, [slurm_1, slurm_2])
         self.assertRaises(NotImplementedError, slurm.add_subdag, slurm_1)
