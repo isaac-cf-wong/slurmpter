@@ -33,7 +33,7 @@ Suppose now you want to submit a single job to Slurm, the executable is ``<exec>
 If you want to run a Python script e.g. ``script.py``, replace ``<exec>`` with ``python`` and ``<args>`` with ``script.py``.
 
 -----------------------------------------
-Build a simple workflow with mutiple jobs
+Build a simple workflow with multiple jobs
 -----------------------------------------
 
 Suppose now you want to submit two jobs with different executables in a batch to Slurm,

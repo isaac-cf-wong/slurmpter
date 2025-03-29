@@ -1,8 +1,10 @@
 """Slurm job class for handling Slurm jobs using pycondor.job.Job.
 """
 
-import subprocess
+from __future__ import annotations
+
 import os
+import subprocess
 
 import pycondor.job
 import pycondor.utils
@@ -91,7 +93,7 @@ class SlurmJob(pycondor.job.Job):
         default_attr = ['name', 'executable', 'logger']
         for attr in sorted(vars(self)):
             if getattr(self, attr) and attr not in default_attr:
-                nondefaults += ', {}={}'.format(attr, getattr(self, attr))
+                nondefaults += f', {attr}={getattr(self, attr)}'
         output = 'SlurmJob(name={}, executable={}{})'.format(
             self.name, os.path.basename(self.executable), nondefaults)
         return output
@@ -112,11 +114,11 @@ class SlurmJob(pycondor.job.Job):
             Self object.
         """
         self.logger.info(
-            "Building submission file for Job {}...".format(self.name))
+            f"Building submission file for Job {self.name}...")
         self._make_submit_script(makedirs, fancyname)
         self._built = True
         self.logger.info(
-            "Submission file for {} successfully built!".format(self.name))
+            f"Submission file for {self.name} successfully built!")
         return self
 
     @pycondor.utils.requires_command("sbatch")
@@ -143,8 +145,8 @@ class SlurmJob(pycondor.job.Job):
                              "Interjob relationship requires Slurm.")
         command = "sbatch"
         if submit_options is not None:
-            command += " {}".format(submit_options)
-        command += " {}".format(self.submit_file)
+            command += f" {submit_options}"
+        command += f" {self.submit_file}"
 
         proc = subprocess.Popen(
             pycondor.utils.split_command_string(command),
@@ -193,19 +195,19 @@ class SlurmJob(pycondor.job.Job):
         name = self._get_fancyname() if fancyname else self.name
 
         submit_file = (
-            os.path.join(self.submit, "{}.submit".format(name))
+            os.path.join(self.submit, f"{name}.submit")
             if self.submit is not None
-            else "{}.submit".format(name)
+            else f"{name}.submit"
         )
         output_file = (
-            os.path.join(self.output, "{}.output".format(name))
+            os.path.join(self.output, f"{name}.output")
             if self.output is not None
-            else "{}.output".format(name)
+            else f"{name}.output"
         )
         error_file = (
-            os.path.join(self.error, "{}.error".format(name))
+            os.path.join(self.error, f"{name}.error")
             if self.error is not None
-            else "{}.error".format(name)
+            else f"{name}.error"
         )
         self.submit_file = submit_file
         self.output_file = output_file
@@ -214,11 +216,11 @@ class SlurmJob(pycondor.job.Job):
 
         with open(self.submit_file, "w") as f:
             f.write("#!/bin/bash\n")
-            f.write("#SBATCH --job-name={}\n".format(name))
-            f.write("#SBATCH --output={}\n".format(output_file))
-            f.write("#SBATCH --error={}\n".format(error_file))
+            f.write(f"#SBATCH --job-name={name}\n")
+            f.write(f"#SBATCH --output={output_file}\n")
+            f.write(f"#SBATCH --error={error_file}\n")
             if self._slurm_nodes is not None:
-                f.write("#SBATCH --nodes={}\n".format(self._slurm_nodes))
+                f.write(f"#SBATCH --nodes={self._slurm_nodes}\n")
             if self._slurm_ntasks_per_node is not None:
                 f.write("#SBATCH --ntasks-per-node={}\n"
                         "".format(self._slurm_ntasks_per_node))
@@ -226,23 +228,23 @@ class SlurmJob(pycondor.job.Job):
                 f.write("#SBATCH --cpus-per-task={}\n"
                         "".format(self._slurm_cpus_per_task))
             if self._slurm_mem_per_node is not None:
-                f.write("#SBATCH --mem={}\n".format(self._slurm_mem_per_node))
+                f.write(f"#SBATCH --mem={self._slurm_mem_per_node}\n")
             if self._slurm_extra_sbatch_options is not None:
                 for option in self._slurm_extra_sbatch_options:
-                    f.write("#SBATCH --{}\n".format(option))
+                    f.write(f"#SBATCH --{option}\n")
             f.write("\n")
             if self._slurm_extra_lines is not None:
                 for extra_line in self._slurm_extra_lines:
-                    f.write("{}\n".format(extra_line))
+                    f.write(f"{extra_line}\n")
                 f.write("\n")
             if self._slurm_modules is not None:
                 for module in self._slurm_modules:
-                    f.write("module load {}\n".format(module))
+                    f.write(f"module load {module}\n")
                 f.write("\n")
             base_arg = "srun"
             if self._slurm_extra_srun_options:
                 for option in self._slurm_extra_srun_options:
-                    base_arg += " --{}".format(option)
+                    base_arg += f" --{option}"
             for arg in self.args:
                 f.write("{} {} {} &\n"
                         "".format(base_arg, self.executable, arg.arg))
