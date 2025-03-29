@@ -1,7 +1,7 @@
 .. slurmpter documentation master file, created by
    sphinx-quickstart on Tue Oct 27 13:38:47 2020.
    You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+   contain the root ``toctree`` directive.
 
 Slurmpter Home
 ==============
@@ -58,7 +58,7 @@ Slurmpter (Slurm Scripter) is a package to build Slurm submit files of a workflo
     slurmpter @ GitLab <https://gitlab.com/isaac-cfwong/slurmpter>
     slurmpter mirror @ GitHub <https://github.com/isaac-cfwong/slurmpter>
     Issue tracker <https://gitlab.com/isaac-cfwong/slurmpter/-/issues>
-    
+
 
 Indices and tables
 ==================

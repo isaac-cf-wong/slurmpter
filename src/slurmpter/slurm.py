@@ -1,8 +1,10 @@
 """Slurm class to build slurm job with pycondor.
 """
 
-import subprocess
+from __future__ import annotations
+
 import os
+import subprocess
 
 import pycondor.dagman
 import pycondor.utils
@@ -39,7 +41,7 @@ class Slurm(pycondor.dagman.Dagman):
         nondefaults = ''
         for attr in sorted(vars(self)):
             if getattr(self, attr) and attr not in ['name', 'nodes', 'logger']:
-                nondefaults += ', {}={}'.format(attr, getattr(self, attr))
+                nondefaults += f', {attr}={getattr(self, attr)}'
         output = 'Slurm(name={}, n_nodes={}{})'.format(self.name,
                                                        len(self.nodes),
                                                        nondefaults)
@@ -65,19 +67,19 @@ class Slurm(pycondor.dagman.Dagman):
 
         name = self._get_fancyname() if fancyname else self.name
         submit_file = (
-            os.path.join(self.submit, "{}.submit".format(name))
+            os.path.join(self.submit, f"{name}.submit")
             if self.submit is not None
-            else "{}.submit".format(name)
+            else f"{name}.submit"
         )
         output_file = (
-            os.path.join(self.submit, "{}.output".format(name))
+            os.path.join(self.submit, f"{name}.output")
             if self.submit is not None
-            else "{}.output".format(name)
+            else f"{name}.output"
         )
         error_file = (
-            os.path.join(self.submit, "{}.error".format(name))
+            os.path.join(self.submit, f"{name}.error")
             if self.submit is not None
-            else "{}.error".format(name)
+            else f"{name}.error"
         )
         self.submit_file = submit_file
         self.output_file = output_file
@@ -87,28 +89,28 @@ class Slurm(pycondor.dagman.Dagman):
         with open(submit_file, "w") as f:
             f.write("#!/bin/bash\n")
             # Standard output and error.
-            f.write("#SBATCH --job-name={}\n".format(name))
-            f.write("#SBATCH --output={}\n".format(output_file))
-            f.write("#SBATCH --error={}\n\n".format(error_file))
+            f.write(f"#SBATCH --job-name={name}\n")
+            f.write(f"#SBATCH --output={output_file}\n")
+            f.write(f"#SBATCH --error={error_file}\n\n")
             # Write extra lines if any.
             if self.extra_lines is not None:
                 for extra_line in self.extra_lines:
-                    f.write("{}\n".format(extra_line))
+                    f.write(f"{extra_line}\n")
                 f.write("\n")
             # Write jobs.
             # Get a map from the job name to the job id.
             job_map = {self.nodes[i].name: i for i in range(len(self.nodes))}
             for i in range(len(self.nodes)):
                 self.nodes[i].build(makedirs, fancyname)
-                submit_str = "jid{}=($(sbatch".format(i)
+                submit_str = f"jid{i}=($(sbatch"
                 # Get parents of the job.
                 parents = [job.name for job in self.nodes[i].parents]
                 if len(parents) > 0:
                     submit_str += " --dependency=afterok"
                     for parent in parents:
-                        submit_str += ":${{jid{}[-1]}}".format(job_map[parent])
-                submit_str += " {}))".format(self.nodes[i].submit_file)
-                f.write("{}\n".format(submit_str))
+                        submit_str += f":${{jid{job_map[parent]}[-1]}}"
+                submit_str += f" {self.nodes[i].submit_file}))"
+                f.write(f"{submit_str}\n")
         self._built = True
         self.logger.info("Slurm submission file for {} successfully "
                          "built!".format(self.name))
@@ -125,8 +127,8 @@ class Slurm(pycondor.dagman.Dagman):
         """
         command = "sbatch"
         if submit_options is not None:
-            command += " {}".format(submit_options)
-        command += " {}".format(self.submit_file)
+            command += f" {submit_options}"
+        command += f" {self.submit_file}"
 
         proc = subprocess.Popen(
             pycondor.utils.split_command_string(command),

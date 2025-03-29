@@ -263,7 +263,7 @@ Construct a Slurm object
     # Instantiate a Slurm object which defines the graph of workflow.
     slurm = Slurm(name="slurm", submit=submit)
 
-You have to first construct a ``Slurm`` which will hold all the ``SlurmJob``. The ``name`` of the object defines the prefix of the ouput submit file, and therefore you should use different names for all ``Slurm`` and ``SlurmJob`` objects.
+You have to first construct a ``Slurm`` which will hold all the ``SlurmJob``. The ``name`` of the object defines the prefix of the output submit file, and therefore you should use different names for all ``Slurm`` and ``SlurmJob`` objects.
 
 .. _job_gen_data:
 
@@ -293,7 +293,7 @@ Usage of ``generate-data``:
 .. code-block:: bash
 
     generate-data --output <output> --input <input>``
-    
+
 ``generate-data`` ingests the input file ``<input>`` and writes the simulated data to ``<output>``.
 
 ``name`` defines the name of the job. ``executable`` is the name of the executable. You should make sure ``executable`` can be found in ``PATH``. ``slurm=slurm`` adds this ``SlurmJob`` object to the ``Slurm`` object ``slurm`` that we created above.
@@ -303,7 +303,7 @@ Two arguments are added to the job via ``job_gen.add_arg()``. The ``SlurmJob`` t
 .. code-block:: python
 
     generate-data --output data_0.txt --input input_0.txt
-    
+
     generate-data --output data_1.txt --input input_1.txt
 
 respectively. The two runs can occur concurrently.
@@ -341,7 +341,7 @@ Usage of ``analyze-data``:
 
 ``analyze-data`` ingests the simulated data ``<input>`` and outputs the analysis result to ``<output>``.
 
-Here the ``job_analyze`` ingests the output files ``data_0.txt`` and ``data_1.txt`` from ``job_gen`` and writes the anlysis results to ```result_0.txt`` and ``result_1.txt`` respectively. ``job_analyze.add_parent(job_gen)`` forces the ``job_analyze`` to start after ``job_gen`` has completed all the runs and all exit normally.
+Here the ``job_analyze`` ingests the output files ``data_0.txt`` and ``data_1.txt`` from ``job_gen`` and writes the analysis results to ```result_0.txt`` and ``result_1.txt`` respectively. ``job_analyze.add_parent(job_gen)`` forces the ``job_analyze`` to start after ``job_gen`` has completed all the runs and all exit normally.
 
 .. _job_postprocess:
 
@@ -371,7 +371,7 @@ Usage of ``postprocess-data``:
 
 .. code-block:: bash
 
-    postprocess-data --output <output> --input <intput>
+    postprocess-data --output <output> --input <input>
 
 ``postprocess-data`` ingests the result files ``<input>`` and writes the processed data to ``<output>``.
 
@@ -442,7 +442,7 @@ Usage of ``summary``:
 
 .. code-block:: bash
 
-    summary --output <output> --input <intput>
+    summary --output <output> --input <input>
 
 ``summary`` ingests the post-processed data and plots ``<input>`` and writes a summary file to ``<output>``.
 

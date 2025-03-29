@@ -1,6 +1,10 @@
-import unittest
+from __future__ import annotations
 
-from slurmpter import SlurmJob, Slurm
+import tempfile
+
+import pytest
+
+from slurmpter import Slurm, SlurmJob
 
 expected_TestSlurm_test_build_slurm_output = """#!/bin/bash
 #SBATCH --job-name=test_slurm_build_slurm
@@ -148,116 +152,115 @@ expected_slurm_str = "Slurm(name=test_slurm_build_slurm, n_nodes=5, _built=True,
                      "test_slurm_build_slurm.submit, submit_name=test_slurm_build_slurm)"
 
 
-class TestSlurm(unittest.TestCase):
-
-    def test_build(self):
-        error = "slurm/error"
-        output = "slurm/output"
-        submit = "slurm/submit"
+def test_build():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        error = f"{temp_dir}/error"
+        output = f"{temp_dir}/output"
+        submit = f"{temp_dir}/submit"
 
         slurm = Slurm(name="test_slurm_build_slurm",
                       submit=submit,
                       extra_lines=["extra_line_0", "extra_line_1"])
 
         job_0 = SlurmJob(name="test_slurm_build_job_0",
-                         executable="executable_0",
-                         submit=submit,
-                         output=output,
-                         error=error,
-                         nodes=1,
-                         ntasks_per_node=1,
-                         cpus_per_task=4,
-                         mem_per_node="16G",
-                         extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
-                                               "sbatch_option_1=sbatch_xoption_1"],
-                         extra_srun_options=["srun_option_0=srun_xoption_0",
-                                             "srun_option_1=srun_xoption_1"],
-                         extra_lines=["extra_line_0", "extra_line_1"],
-                         modules=["module_0", "module_1"],
-                         arguments=["--arg arg_0", "--arg arg_1"])
+                        executable="executable_0",
+                        submit=submit,
+                        output=output,
+                        error=error,
+                        nodes=1,
+                        ntasks_per_node=1,
+                        cpus_per_task=4,
+                        mem_per_node="16G",
+                        extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
+                                            "sbatch_option_1=sbatch_xoption_1"],
+                        extra_srun_options=["srun_option_0=srun_xoption_0",
+                                            "srun_option_1=srun_xoption_1"],
+                        extra_lines=["extra_line_0", "extra_line_1"],
+                        modules=["module_0", "module_1"],
+                        arguments=["--arg arg_0", "--arg arg_1"])
         slurm.add_job(job_0)
         job_0.add_arg("--arg arg_2")
         job_0.add_args(["--arg arg_3", "--arg arg_4"])
 
         job_1 = SlurmJob(name="test_slurm_build_job_1",
-                         executable="executable_1",
-                         submit=submit,
-                         output=output,
-                         error=error,
-                         nodes=1,
-                         ntasks_per_node=1,
-                         cpus_per_task=4,
-                         mem_per_node="16G",
-                         extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
-                                               "sbatch_option_1=sbatch_xoption_1"],
-                         extra_srun_options=["srun_option_0=srun_xoption_0",
-                                             "srun_option_1=srun_xoption_1"],
-                         extra_lines=["extra_line_0", "extra_line_1"],
-                         modules=["module_0", "module_1"],
-                         arguments=["--arg arg_0", "--arg arg_1"],
-                         slurm=slurm)
+                        executable="executable_1",
+                        submit=submit,
+                        output=output,
+                        error=error,
+                        nodes=1,
+                        ntasks_per_node=1,
+                        cpus_per_task=4,
+                        mem_per_node="16G",
+                        extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
+                                            "sbatch_option_1=sbatch_xoption_1"],
+                        extra_srun_options=["srun_option_0=srun_xoption_0",
+                                            "srun_option_1=srun_xoption_1"],
+                        extra_lines=["extra_line_0", "extra_line_1"],
+                        modules=["module_0", "module_1"],
+                        arguments=["--arg arg_0", "--arg arg_1"],
+                        slurm=slurm)
         job_1.add_parent(job_0)
         job_1.add_arg("--arg arg_2")
         job_1.add_args(["--arg arg_3", "--arg arg_4"])
 
         job_2 = SlurmJob(name="test_slurm_build_job_2",
-                         executable="executable_2",
-                         submit=submit,
-                         output=output,
-                         error=error,
-                         nodes=1,
-                         ntasks_per_node=1,
-                         cpus_per_task=4,
-                         mem_per_node="16G",
-                         extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
-                                               "sbatch_option_1=sbatch_xoption_1"],
-                         extra_srun_options=["srun_option_0=srun_xoption_0",
-                                             "srun_option_1=srun_xoption_1"],
-                         extra_lines=["extra_line_0", "extra_line_1"],
-                         modules=["module_0", "module_1"],
-                         arguments=["--arg arg_0", "--arg arg_1"],
-                         slurm=slurm)
+                            executable="executable_2",
+                            submit=submit,
+                            output=output,
+                            error=error,
+                            nodes=1,
+                            ntasks_per_node=1,
+                            cpus_per_task=4,
+                            mem_per_node="16G",
+                            extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
+                                                "sbatch_option_1=sbatch_xoption_1"],
+                            extra_srun_options=["srun_option_0=srun_xoption_0",
+                                                "srun_option_1=srun_xoption_1"],
+                            extra_lines=["extra_line_0", "extra_line_1"],
+                            modules=["module_0", "module_1"],
+                            arguments=["--arg arg_0", "--arg arg_1"],
+                            slurm=slurm)
         job_2.add_parents([job_0, job_1])
         job_2.add_arg("--arg arg_2")
         job_2.add_args(["--arg arg_3", "--arg arg_4"])
 
         job_3 = SlurmJob(name="test_slurm_build_job_3",
-                         executable="executable_3",
-                         submit=submit,
-                         output=output,
-                         error=error,
-                         nodes=1,
-                         ntasks_per_node=1,
-                         cpus_per_task=4,
-                         mem_per_node="16G",
-                         extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
-                                               "sbatch_option_1=sbatch_xoption_1"],
-                         extra_srun_options=["srun_option_0=srun_xoption_0",
-                                             "srun_option_1=srun_xoption_1"],
-                         extra_lines=["extra_line_0", "extra_line_1"],
-                         modules=["module_0", "module_1"],
-                         arguments=["--arg arg_0", "--arg arg_1"],
-                         slurm=slurm)
+                        executable="executable_3",
+                        submit=submit,
+                        output=output,
+                        error=error,
+                        nodes=1,
+                        ntasks_per_node=1,
+                        cpus_per_task=4,
+                        mem_per_node="16G",
+                        extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
+                                            "sbatch_option_1=sbatch_xoption_1"],
+                        extra_srun_options=["srun_option_0=srun_xoption_0",
+                                            "srun_option_1=srun_xoption_1"],
+                        extra_lines=["extra_line_0", "extra_line_1"],
+                        modules=["module_0", "module_1"],
+                        arguments=["--arg arg_0", "--arg arg_1"],
+                        slurm=slurm)
         job_3.add_arg("--arg arg_2")
         job_3.add_args(["--arg arg_3", "--arg arg_4"])
 
         job_4 = SlurmJob(name="test_slurm_build_job_4",
-                         executable="executable_4",
-                         submit=submit,
-                         output=output,
-                         error=error,
-                         nodes=1,
-                         ntasks_per_node=1,
-                         cpus_per_task=4,
-                         mem_per_node="16G",
-                         extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
-                                               "sbatch_option_1=sbatch_xoption_1"],
-                         extra_srun_options=["srun_option_0=srun_xoption_0",
-                                             "srun_option_1=srun_xoption_1"],
-                         extra_lines=["extra_line_0", "extra_line_1"],
-                         modules=["module_0", "module_1"],
-                         arguments=["--arg arg_0", "--arg arg_1"],
-                         slurm=slurm)
+                        executable="executable_4",
+                        submit=submit,
+                        output=output,
+                        error=error,
+                        nodes=1,
+                        ntasks_per_node=1,
+                        cpus_per_task=4,
+                        mem_per_node="16G",
+                        extra_sbatch_options=["sbatch_option_0=sbatch_xoption_0",
+                                            "sbatch_option_1=sbatch_xoption_1"],
+                        extra_srun_options=["srun_option_0=srun_xoption_0",
+                                            "srun_option_1=srun_xoption_1"],
+                        extra_lines=["extra_line_0", "extra_line_1"],
+                        modules=["module_0", "module_1"],
+                        arguments=["--arg arg_0", "--arg arg_1"],
+                        slurm=slurm)
         job_4.add_arg("--arg arg_2")
         job_4.add_args(["--arg arg_3", "--arg arg_4"])
 
@@ -266,56 +269,69 @@ class TestSlurm(unittest.TestCase):
 
         slurm.build(fancyname=False)
 
-        with open("slurm/submit/test_slurm_build_slurm.submit", "r") as f:
+        with open(f"{temp_dir}/submit/test_slurm_build_slurm.submit") as f:
             data = f.read()
-        self.assertEqual(data, expected_TestSlurm_test_build_slurm_output)
+        assert data == expected_TestSlurm_test_build_slurm_output
 
-        with open("slurm/submit/test_slurm_build_job_0.submit", "r") as f:
+        with open(f"{temp_dir}/submit/test_slurm_build_job_0.submit") as f:
             data = f.read()
-        self.assertEqual(data, expected_TestSlurm_test_build_job_0_output)
+        assert data == expected_TestSlurm_test_build_job_0_output
 
-        with open("slurm/submit/test_slurm_build_job_1.submit", "r") as f:
+        with open(f"{temp_dir}/submit/test_slurm_build_job_1.submit") as f:
             data = f.read()
-        self.assertEqual(data, expected_TestSlurm_test_build_job_1_output)
+        assert data == expected_TestSlurm_test_build_job_1_output
 
-        with open("slurm/submit/test_slurm_build_job_2.submit", "r") as f:
+        with open(f"{temp_dir}/submit/test_slurm_build_job_2.submit") as f:
             data = f.read()
-        self.assertEqual(data, expected_TestSlurm_test_build_job_2_output)
+        assert data == expected_TestSlurm_test_build_job_2_output
 
-        with open("slurm/submit/test_slurm_build_job_3.submit", "r") as f:
+        with open(f"{temp_dir}/submit/test_slurm_build_job_3.submit") as f:
             data = f.read()
-        self.assertEqual(data, expected_TestSlurm_test_build_job_3_output)
+        assert data == expected_TestSlurm_test_build_job_3_output
 
-        with open("slurm/submit/test_slurm_build_job_4.submit", "r") as f:
+        with open(f"{temp_dir}/submit/test_slurm_build_job_4.submit") as f:
             data = f.read()
-        self.assertEqual(data, expected_TestSlurm_test_build_job_4_output)
+        assert data == expected_TestSlurm_test_build_job_4_output
 
-        self.assertEqual(job_0.haschildren(), True)
-        self.assertEqual(job_0.hasparents(), False)
-        self.assertEqual(job_1.haschildren(), True)
-        self.assertEqual(job_1.hasparents(), True)
-        self.assertEqual(job_2.haschildren(), True)
-        self.assertEqual(job_2.hasparents(), True)
-        self.assertEqual(job_3.haschildren(), False)
-        self.assertEqual(job_3.hasparents(), True)
-        self.assertEqual(job_4.haschildren(), False)
-        self.assertEqual(job_4.hasparents(), True)
+        assert job_0.haschildren() is True
+        assert job_0.hasparents() is False
+        assert job_1.haschildren() is True
+        assert job_1.hasparents() is True
+        assert job_2.haschildren() is True
+        assert job_2.hasparents() is True
+        assert job_3.haschildren() is False
+        assert job_3.hasparents() is True
+        assert job_4.haschildren() is False
+        assert job_4.hasparents() is True
 
         slurm.visualize("workflow.pdf")
 
-        self.assertEqual(str(slurm), expected_slurm_str)
+        assert str(slurm) == expected_slurm_str
 
-    def test_exception(self):
-        slurm = Slurm(name="test")
-        slurm_1 = Slurm(name="test_1")
-        slurm_2 = Slurm(name="test_2")
 
-        # Test forbidden function calls.
-        self.assertRaises(NotImplementedError, slurm.add_child, slurm_1)
-        self.assertRaises(NotImplementedError, slurm.add_children, [slurm_1, slurm_2])
-        self.assertRaises(NotImplementedError, slurm.add_parent, slurm_1)
-        self.assertRaises(NotImplementedError, slurm.add_parents, [slurm_1, slurm_2])
-        self.assertRaises(NotImplementedError, slurm.add_subdag, slurm_1)
-        self.assertRaises(NotImplementedError, slurm.haschildren)
-        self.assertRaises(NotImplementedError, slurm.hasparents)
-        self.assertRaises(NotImplementedError, slurm.submit_dag)
+def test_exception():
+    slurm = Slurm(name="test")
+    slurm_1 = Slurm(name="test_1")
+    slurm_2 = Slurm(name="test_2")
+
+    # Test forbidden function calls.
+    with pytest.raises(NotImplementedError):
+        slurm.add_child(slurm_1)
+    with pytest.raises(NotImplementedError):
+        slurm.add_children([slurm_1, slurm_2])
+    with pytest.raises(NotImplementedError):
+        slurm.add_children([slurm_1, slurm_2])
+    with pytest.raises(NotImplementedError):
+        slurm.add_parent(slurm_1)
+    with pytest.raises(NotImplementedError):
+        slurm.add_parents([slurm_1, slurm_2])
+    with pytest.raises(NotImplementedError):
+        slurm.add_subdag(slurm_1)
+    with pytest.raises(NotImplementedError):
+        slurm.haschildren()
+    with pytest.raises(NotImplementedError):
+        slurm.haschildren()
+    with pytest.raises(NotImplementedError):
+        slurm.hasparents()
+    with pytest.raises(NotImplementedError):
+        slurm.submit_dag()
